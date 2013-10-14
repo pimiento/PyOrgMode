@@ -228,7 +228,7 @@ class OrgPlugin:
 class OrgElement:
     """
     Generic class for all Elements excepted text and unrecognized ones
-    """ 
+    """
     def __init__(self):
         self.content=[]
         self.parent=None
@@ -288,7 +288,7 @@ class OrgClock(OrgPlugin):
         else:
             self.treated = False
         return current
-   
+
     class Element(OrgElement):
         """Clock is an element taking into account CLOCK elements"""
         TYPE = "CLOCK_ELEMENT"
@@ -314,7 +314,7 @@ class OrgSchedule(OrgPlugin):
         scheduled = self.regexp_scheduled.findall(line)
         deadline = self.regexp_deadline.findall(line)
         closed = self.regexp_closed.findall(line)
-  
+
         if scheduled != []:
             scheduled = scheduled[0][0]
         if closed != []:
@@ -337,7 +337,7 @@ class OrgSchedule(OrgPlugin):
         def __init__(self,scheduled=[],deadline=[],closed=[]):
             OrgElement.__init__(self)
             self.type = 0
-  
+
             if scheduled != []:
                 self.type = self.type | self.SCHEDULED
                 self.scheduled = OrgDate(scheduled)
@@ -347,7 +347,7 @@ class OrgSchedule(OrgPlugin):
             if closed  != []:
                 self.type = self.type | self.CLOSED
                 self.closed = OrgDate(closed)
-  
+
         def _output(self):
             """Outputs the Schedule element in text format (e.g SCHEDULED: <2010-10-10 10:10>)"""
             output = ""
@@ -382,7 +382,7 @@ class OrgDrawer(OrgPlugin):
             self.treated = False
             return current
         return current # It is a drawer, change the current also (even if not modified)
-    
+
     class Element(OrgElement):
         """A Drawer object, containing properties and text"""
         TYPE = "DRAWER_ELEMENT"
@@ -463,7 +463,7 @@ class OrgNode(OrgPlugin):
 
             if current.parent :
                 current.parent.append(current)
-  
+
                   # Is that a new level ?
             if (len(heading[0][0]) > current.level): # Yes
                 parent = current # Parent is now the current node
@@ -474,14 +474,14 @@ class OrgNode(OrgPlugin):
                     current = current.parent
                     parent = current.parent
             # Creating a new node and assigning parameters
-            current = OrgNode.Element() 
+            current = OrgNode.Element()
             current.level = len(heading[0][0])
             current.heading = re.sub(":([\w]+):","",heading[0][3]) # Remove tags
             current.priority = heading[0][2].strip('[#]')
             current.parent = parent
             if heading[0][1]:
                 current.todo = heading[0][1]
-      
+
             # Looking for tags
             heading_without_links = re.sub(" \[(.+)\]","",heading[0][3])
             current.tags = re.findall(":([\w]+):",heading_without_links)
@@ -497,19 +497,19 @@ class OrgNode(OrgPlugin):
         # Defines an OrgMode Node in a structure
         # The ID is auto-generated using uuid.
         # The level 0 is the document itself
-        TYPE = "NODE_ELEMENT"    
+        TYPE = "NODE_ELEMENT"
         def __init__(self):
             OrgElement.__init__(self)
-            self.content = []       
+            self.content = []
             self.level = 0
             self.heading = ""
             self.priority = ""
             self.tags = []
           # TODO  Scheduling structure
-  
+
         def _output(self):
             output = ""
-            
+
             if hasattr(self,"level"):
                 output = output + "*"*self.level
 
@@ -521,15 +521,15 @@ class OrgNode(OrgPlugin):
                 if self.priority:
                     output = output + "[#" + self.priority + "] "
                 output = output + self.heading
-  
+
                 for tag in self.tags:
                     output= output + ":" + tag + ":"
-  
+
                 output = output + "\n"
-    
+
             for element in self.content:
                 output = output + element.__str__()
-  
+
             return output
         def append_clean(self,element):
             if isinstance(element,list):
@@ -581,8 +581,8 @@ class OrgDataStructure(OrgElement):
             self.plugins.append(plugin)
     def set_todo_states(self,new_states):
         """
-        Used to override the default list of todo states for any 
-        OrgNode plugins in this object's plugins list. Expects 
+        Used to override the default list of todo states for any
+        OrgNode plugins in this object's plugins list. Expects
         a list[] of strings as its argument. The list can be split
         by '|' entries into TODO items and DONE items. Anything after
         a second '|' will not be processed and be returned.
@@ -619,7 +619,7 @@ class OrgDataStructure(OrgElement):
                 plugin.todo_list = new_todo_states
                 plugin.done_list = new_done_states
         if new_states:
-            return new_states # Return any leftovers  
+            return new_states # Return any leftovers
     def get_todo_states(self, list_type="todo"):
         """
         Returns a list of todo states. An empty list means that
@@ -636,7 +636,7 @@ class OrgDataStructure(OrgElement):
         return list(set(all_states))
     def add_todo_state(self, new_state):
         """
-        Appends a todo state to the list of todo states of any OrgNode 
+        Appends a todo state to the list of todo states of any OrgNode
         plugins in this objects plugins list.
         Expects a string as its argument.
         """
@@ -645,7 +645,7 @@ class OrgDataStructure(OrgElement):
                 plugin.todo_list.append(new_state)
     def add_done_state(self, new_state):
         """
-        Appends a todo state to the list of todo states of any OrgNode 
+        Appends a todo state to the list of todo states of any OrgNode
         plugins in this objects plugins list.
         Expects a string as its argument.
         """
@@ -682,7 +682,7 @@ class OrgDataStructure(OrgElement):
                     raise ValueError("State " + possible_state + " not registered. See PyOrgMode.OrgDataStructure.add_todo_state.")
         results_list = []
         # Recursive function that steps through each node in current level,
-        # looking for TODO items and then calls itself to look for 
+        # looking for TODO items and then calls itself to look for
         # TODO items one level down.
         def extract_from_level(content):
             for node in content:

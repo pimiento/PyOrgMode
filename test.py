@@ -1,17 +1,17 @@
 
 """Tests for parsing and outputting a simple .org test file
- 
+
  You need the fr_FR.UTF-8 locale to run these tests
  """
- 
+
 import locale
 import PyOrgMode
 try:
     import unittest2 as unittest
 except ImportError:
     import unittest
- 
- 
+
+
 def _normalize_ignored(line):
     """Normalize a line to ignore differences which aren't yet handled"""
     line = line.replace(':ORDERED:  t', ':ORDERED: t')
